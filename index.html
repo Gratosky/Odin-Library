@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      body {
+        display: flex;
+        justify-content: center;
+        align-items: centers;
+      }
+      .book-form {
+        display: flex;
+        flex-direction: column;
+        width: 300px;
+        height: 350px;
+        justify-content: center;
+        align-items: center;
+        background-color: antiquewhite;
+        padding: 20px 30px;
+        border-radius: 10px;
+      }
+
+      #bookForm {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+      }
+
+      .input-field {
+        display: grid;
+      }
+
+      button {
+        align-self: center;
+      }
+    </style>
+  </head>
+  <body>
+    <!--For input form to get book info-->
+    <div class="book-form">
+      <h2>Add New Book</h2>
+      <form action="#" method="POST" id="bookForm">
+        <div class="input-field">
+          <!--Title Input-->
+          <label for="title" class="book-title">Book Title</label>
+          <input
+            type="text"
+            id="title"
+            name="title"
+            placeholder="e.g., The Great Gatsby"
+            required
+            class="title-input"
+          />
+        </div>
+
+        <!--Author Input-->
+        <div class="input-field">
+          <label for="author" class="book-author">Author</label>
+          <input
+            type="text"
+            id="author"
+            placeholder="e.g, F. Scott Fitzgerald"
+            class="author-input"
+            required
+            name="author"
+          />
+        </div>
+
+        <!--Pages Input-->
+        <div class="input-field">
+          <label for="pages" class="book-pages">Pages</label>
+          <input
+            type="number"
+            id="pages"
+            class="pages-input"
+            required
+            placeholder="e.g, 216"
+            min="1"
+            name="pages"
+          />
+        </div>
+
+        <!--Read Status Checkbox-->
+        <div>
+          <input type="checkbox" id="read" class="read-status" name="read" />
+          <label for="read" class="book-read">I have read this book.</label>
+        </div>
+
+        <!--Admit Button-->
+        <div>
+          <button type="submit" class="submit-btn">Add Book</button>
+        </div>
+      </form>
+    </div>
+
+    <div class="book-display">
+      <div class="book-card">
+        <p class="title"></p>
+        <p class="author"></p>
+        <p class="pages"></p>
+      </div>
+    </div>
+    <script>
+      const myLibrary = [];
+
+      function Book(title, author, pages, read) {
+        this.title = title;
+        this.author = author;
+        this.pages = pages;
+        this.read = read;
+      }
+
+      function addBookToLibrary(title, author, pages, read) {
+        const book = new Book(title, author, pages, read);
+        myLibrary.push(book);
+
+        console.log(`'${title}' by ${author} has been added.`);
+      }
+
+      console.log(
+        addBookToLibrary("Harry Potter", "J.K.Rowlins", "514 pages", "read")
+      );
+      console.log(myLibrary);
+
+      function availableBooks(myLibrary) {
+        let i = 0;
+
+        while (i < myLibrary.length) {
+          console.log(myLibrary[i]);
+          i++;
+        }
+
+        //or we can use forEach
+        /*myLibrary.forEach(book => {
+            console.log(book)
+        })*/
+      }
+
+      console.log(availableBooks(myLibrary));
+
+      //JavaScript to handle form submission
+      document
+        .getElementById("bookForm")
+        .addEventListener("submit", function (event) {
+          event.preventDefault();
+
+          //Get input values
+          const bookTitle = document.querySelector(".title-input").value;
+          const bookAuthor = document.querySelector(".author-input").value;
+          const bookPages = document.querySelector(".pages-input").value;
+          const bookRead = document.querySelector(".read-status").value;
+
+          addBookToLibrary(bookTitle, bookAuthor, bookPages, bookRead);
+        });
+    </script>
+  </body>
+</html>

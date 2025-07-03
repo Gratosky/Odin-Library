@@ -12,6 +12,12 @@ A project to build a book library application that uses JavaScript object constr
 
 - JavaScript
 - HTML & CSS
+  function Book(title, author, pages, read) {
+  this.title = title;
+  this.author = author;
+  this.pages = pages;
+  this.read = read;
+  }
 
 ## Getting Started
 
@@ -22,12 +28,7 @@ A project to build a book library application that uses JavaScript object constr
 ## Example Book Constructor
 
 ```js
-function Book(title, author, pages, read) {
-  this.title = title;
-  this.author = author;
-  this.pages = pages;
-  this.read = read;
-}
+
 ```
 
 ## Usage
