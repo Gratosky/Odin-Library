@@ -4,119 +4,102 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
-    <style>
-      body {
-        display: flex;
-        justify-content: center;
-        align-items: centers;
-      }
-      .book-form {
-        display: flex;
-        flex-direction: column;
-        width: 300px;
-        height: 350px;
-        justify-content: center;
-        align-items: center;
-        background-color: antiquewhite;
-        padding: 20px 30px;
-        border-radius: 10px;
-      }
-
-      #bookForm {
-        display: flex;
-        flex-direction: column;
-        gap: 20px;
-      }
-
-      .input-field {
-        display: grid;
-      }
-
-      button {
-        align-self: center;
-      }
-    </style>
+    <link rel="stylesheet" href="styles.css" />
+    <style></style>
   </head>
   <body>
-    <!--For input form to get book info-->
-    <div class="book-form">
-      <h2>Add New Book</h2>
-      <form action="#" method="POST" id="bookForm">
-        <div class="input-field">
-          <!--Title Input-->
-          <label for="title" class="book-title">Book Title</label>
-          <input
-            type="text"
-            id="title"
-            name="title"
-            placeholder="e.g., The Great Gatsby"
-            required
-            class="title-input"
-          />
-        </div>
-
-        <!--Author Input-->
-        <div class="input-field">
-          <label for="author" class="book-author">Author</label>
-          <input
-            type="text"
-            id="author"
-            placeholder="e.g, F. Scott Fitzgerald"
-            class="author-input"
-            required
-            name="author"
-          />
-        </div>
-
-        <!--Pages Input-->
-        <div class="input-field">
-          <label for="pages" class="book-pages">Pages</label>
-          <input
-            type="number"
-            id="pages"
-            class="pages-input"
-            required
-            placeholder="e.g, 216"
-            min="1"
-            name="pages"
-          />
-        </div>
-
-        <!--Read Status Checkbox-->
-        <div>
-          <input type="checkbox" id="read" class="read-status" name="read" />
-          <label for="read" class="book-read">I have read this book.</label>
-        </div>
-
-        <!--Admit Button-->
-        <div>
-          <button type="submit" class="submit-btn">Add Book</button>
-        </div>
-      </form>
+    <div class="header">
+      <h1>MyBuk</h1>
+      <button class="add-book">Add New Book</button>
+    </div>
+    <div class="main-content">
+      <div class="books-container"></div>
     </div>
 
-    <div class="book-display">
-      <div class="book-card">
-        <p class="title"></p>
-        <p class="author"></p>
-        <p class="pages"></p>
+    <dialog class="modal">
+      <!--For input form to get book info-->
+      <div class="book-form">
+        <span class="close-button">&times;</span>
+        <h2>Add New Book</h2>
+        <form action="#" method="POST" id="bookForm">
+          <div class="input-field">
+            <!--Title Input-->
+            <label for="title" class="book-title">Book Title</label>
+            <input
+              type="text"
+              id="title"
+              name="title"
+              placeholder="e.g., The Great Gatsby"
+              required
+              class="title-input"
+            />
+          </div>
+
+          <!--Author Input-->
+          <div class="input-field">
+            <label for="author" class="book-author">Author</label>
+            <input
+              type="text"
+              id="author"
+              placeholder="e.g, F. Scott Fitzgerald"
+              class="author-input"
+              required
+              name="author"
+            />
+          </div>
+
+          <!--Pages Input-->
+          <div class="input-field">
+            <label for="pages" class="book-pages">Pages</label>
+            <input
+              type="number"
+              id="pages"
+              class="pages-input"
+              required
+              placeholder="e.g, 216"
+              min="1"
+              name="pages"
+            />
+          </div>
+
+          <!--Read Status Checkbox-->
+          <div>
+            <input type="checkbox" id="read" class="read-status" name="read" />
+            <label for="read" class="book-read">I have read this book.</label>
+          </div>
+
+          <!--Admit Button-->
+          <div>
+            <button type="submit" class="submit-btn">Add Book</button>
+          </div>
+        </form>
       </div>
-    </div>
-    <script>
-      const myLibrary = [];
+    </dialog>
 
+    <script>
+      let myLibrary = [];
+
+      //Book object
       function Book(title, author, pages, read) {
         this.title = title;
         this.author = author;
         this.pages = pages;
         this.read = read;
+        this.id = crypto.randomUUID();
       }
 
+      Book.prototype.toggleReadStatus = function () {
+        this.read = !this.read;
+      };
+
+      //function to add book to libraTo facilitate this you will want to create Book prototype function that toggles a book instance’s read status.ry
       function addBookToLibrary(title, author, pages, read) {
         const book = new Book(title, author, pages, read);
         myLibrary.push(book);
 
         console.log(`'${title}' by ${author} has been added.`);
+
+        availableBooks(myLibrary);
       }
 
       console.log(
@@ -124,36 +107,118 @@
       );
       console.log(myLibrary);
 
-      function availableBooks(myLibrary) {
-        let i = 0;
+      function removeBookFromLibrary(bookId) {
+        myLibrary = myLibrary.filter((book) => book.id !== bookId);
 
-        while (i < myLibrary.length) {
-          console.log(myLibrary[i]);
-          i++;
-        }
-
-        //or we can use forEach
-        /*myLibrary.forEach(book => {
-            console.log(book)
-        })*/
+        availableBooks(myLibrary);
       }
 
-      console.log(availableBooks(myLibrary));
+      //function to display available books
+      function availableBooks(myLibrary) {
+        const booksContainer = document.querySelector(".books-container");
+
+        //clear book container before iterating
+        booksContainer.innerHTML = "";
+
+        myLibrary.forEach((book) => {
+          //create new div for the book card
+          const bookCard = document.createElement("div");
+          bookCard.classList.add("book-card");
+          bookCard.dataset.bookId = book.id;
+
+          //create and append elements for the title author pages and read status
+          const newCardTitle = document.createElement("div");
+          newCardTitle.textContent = `Title: ${book.title}`;
+          bookCard.appendChild(newCardTitle);
+
+          const newCardAuthor = document.createElement("div");
+          newCardAuthor.textContent = `Author: ${book.author}`;
+          bookCard.appendChild(newCardAuthor);
+
+          const newCardPages = document.createElement("div");
+          newCardPages.textContent = `Pages: ${book.pages}`;
+          bookCard.appendChild(newCardPages);
+
+          const newReadStatus = document.createElement("div");
+          newReadStatus.textContent = `Read: ${book.read ? "Yes" : "No"}`;
+          bookCard.appendChild(newReadStatus);
+
+          const toggleReadBtn = document.createElement("div");
+          toggleReadBtn.classList.add("toggle-button");
+          toggleReadBtn.textContent = `Mark as ${
+            book.read ? "Unread" : "Read"
+          }`;
+          toggleReadBtn.dataset.bookId = book.id;
+
+          toggleReadBtn.addEventListener("click", function () {
+            const bookToToggle = myLibrary.find((b) => b.id === book.id);
+
+            if (bookToToggle) {
+              bookToToggle.toggleReadStatus();
+              availableBooks(myLibrary);
+            }
+          });
+          bookCard.appendChild(toggleReadBtn);
+
+          //remove button
+          const removeBtn = document.createElement("button");
+          removeBtn.classList.add("remove-book-button");
+          removeBtn.textContent = "Remove";
+          removeBtn.classList.add("remove-btn");
+          removeBtn.dataset.bookId = book.id;
+
+          removeBtn.addEventListener("click", (event) => {
+            const bookIdToRemove = event.target.dataset.bookId;
+            removeBookFromLibrary(bookIdToRemove);
+          });
+          bookCard.appendChild(removeBtn);
+
+          booksContainer.appendChild(bookCard);
+        });
+      }
+
+      availableBooks(myLibrary);
 
       //JavaScript to handle form submission
-      document
-        .getElementById("bookForm")
-        .addEventListener("submit", function (event) {
-          event.preventDefault();
+      const bookForm = document.getElementById("bookForm");
+      bookForm.addEventListener("submit", function (event) {
+        event.preventDefault();
 
-          //Get input values
-          const bookTitle = document.querySelector(".title-input").value;
-          const bookAuthor = document.querySelector(".author-input").value;
-          const bookPages = document.querySelector(".pages-input").value;
-          const bookRead = document.querySelector(".read-status").value;
+        //Get input values
+        const bookTitle = document.querySelector(".title-input").value;
+        const bookAuthor = document.querySelector(".author-input").value;
+        const bookPages = document.querySelector(".pages-input").value;
+        const bookRead = document.querySelector(".read-status").value;
 
-          addBookToLibrary(bookTitle, bookAuthor, bookPages, bookRead);
-        });
+        addBookToLibrary(bookTitle, bookAuthor, bookPages, bookRead);
+
+        bookForm.reset();
+        closeModal();
+      });
+
+      //get modal
+      const modal = document.querySelector(".modal");
+      const mainContent = document.querySelector(".main-content");
+      const addBookBtn = document.querySelector(".add-book");
+      const closeModalBtn = document.querySelector(".close-button");
+
+      addBookBtn.addEventListener("click", openModal);
+
+      //function to open modal
+      function openModal() {
+        modal.showModal();
+        mainContent.classList.add("blurred");
+        document.body.style.overflow = "hidden";
+      }
+
+      //function to close modal
+      function closeModal() {
+        modal.close();
+        mainContent.classList.remove("blurred");
+        document.body.style.overflow = "";
+      }
+
+      closeModalBtn.addEventListener("click", closeModal);
     </script>
   </body>
 </html>
