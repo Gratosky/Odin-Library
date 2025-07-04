@@ -21,7 +21,7 @@
       <div class="book-form">
         <span class="close-button">&times;</span>
         <h2>Add New Book</h2>
-        <form action="#" method="POST" id="bookForm">
+        <form action="#" method="dialog" id="bookForm">
           <div class="input-field">
             <!--Title Input-->
             <label for="title" class="book-title">Book Title</label>
@@ -63,7 +63,7 @@
           </div>
 
           <!--Read Status Checkbox-->
-          <div>
+          <div class="read-or-not">
             <input type="checkbox" id="read" class="read-status" name="read" />
             <label for="read" class="book-read">I have read this book.</label>
           </div>
@@ -102,11 +102,6 @@
         availableBooks(myLibrary);
       }
 
-      console.log(
-        addBookToLibrary("Harry Potter", "J.K.Rowlins", "514 pages", "read")
-      );
-      console.log(myLibrary);
-
       function removeBookFromLibrary(bookId) {
         myLibrary = myLibrary.filter((book) => book.id !== bookId);
 
@@ -143,7 +138,7 @@
           newReadStatus.textContent = `Read: ${book.read ? "Yes" : "No"}`;
           bookCard.appendChild(newReadStatus);
 
-          const toggleReadBtn = document.createElement("div");
+          const toggleReadBtn = document.createElement("button");
           toggleReadBtn.classList.add("toggle-button");
           toggleReadBtn.textContent = `Mark as ${
             book.read ? "Unread" : "Read"
@@ -177,48 +172,75 @@
         });
       }
 
-      availableBooks(myLibrary);
+      function initializeApp() {
+        //  Get references to all the static DOM elements
+        const modal = document.querySelector(".modal");
+        const mainContent = document.querySelector(".main-content");
+        const addBookBtn = document.querySelector(".add-book");
+        const closeModalBtn = document.querySelector(".close-button");
+        const bookForm = document.getElementById("bookForm");
 
-      //JavaScript to handle form submission
-      const bookForm = document.getElementById("bookForm");
-      bookForm.addEventListener("submit", function (event) {
-        event.preventDefault();
+        //function to open modal
+        function openModal() {
+          modal.showModal();
+          mainContent.classList.add("blurred");
+          document.body.style.overflow = "hidden";
+        }
 
-        //Get input values
-        const bookTitle = document.querySelector(".title-input").value;
-        const bookAuthor = document.querySelector(".author-input").value;
-        const bookPages = document.querySelector(".pages-input").value;
-        const bookRead = document.querySelector(".read-status").value;
+        //function to close modal
+        function closeModal() {
+          modal.close();
+          mainContent.classList.remove("blurred");
+          document.body.style.overflow = "";
+        }
 
-        addBookToLibrary(bookTitle, bookAuthor, bookPages, bookRead);
+        //  Add initial data
+        addBookToLibrary("Harry Potter", "J.K.Rowlings", 514, false);
+        addBookToLibrary("The Hobbit", "J.R.R. Tolkien", 310, true);
 
-        bookForm.reset();
-        closeModal();
-      });
+        // Display initial books
+        availableBooks(myLibrary);
 
-      //get modal
-      const modal = document.querySelector(".modal");
-      const mainContent = document.querySelector(".main-content");
-      const addBookBtn = document.querySelector(".add-book");
-      const closeModalBtn = document.querySelector(".close-button");
+        // Set up all the event listeners
+        addBookBtn.addEventListener("click", openModal);
+        closeModalBtn.addEventListener("click", closeModal);
 
-      addBookBtn.addEventListener("click", openModal);
+        bookForm.addEventListener("submit", function (event) {
+          event.preventDefault();
 
-      //function to open modal
-      function openModal() {
-        modal.showModal();
-        mainContent.classList.add("blurred");
-        document.body.style.overflow = "hidden";
+          //Get input values
+          const bookTitle = document.querySelector(".title-input").value;
+          const bookAuthor = document.querySelector(".author-input").value;
+          const bookPages = parseInt(
+            document.querySelector(".pages-input").value
+          );
+          const bookRead = document.querySelector(".read-status").checked;
+
+          addBookToLibrary(bookTitle, bookAuthor, bookPages, bookRead);
+
+          bookForm.reset();
+          closeModal();
+        });
+
+        // Event listener for closing modal by clicking backdrop
+        modal.addEventListener("click", (event) => {
+          if (event.target === modal) {
+            closeModal();
+          }
+        });
+
+        modal.addEventListener("close", () => {
+          if (mainContent.classList.contains("blurred")) {
+            mainContent.classList.remove("blurred");
+          }
+          if (document.body.style.overflow === "hidden") {
+            document.body.style.overflow = "";
+          }
+        });
       }
 
-      //function to close modal
-      function closeModal() {
-        modal.close();
-        mainContent.classList.remove("blurred");
-        document.body.style.overflow = "";
-      }
-
-      closeModalBtn.addEventListener("click", closeModal);
+      //  Trigger the Initialization Function
+      document.addEventListener("DOMContentLoaded", initializeApp);
     </script>
   </body>
 </html>
