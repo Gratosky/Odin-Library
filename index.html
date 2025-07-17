@@ -80,17 +80,24 @@
       let myLibrary = [];
 
       //Book object
-      function Book(title, author, pages, read) {
-        this.title = title;
-        this.author = author;
-        this.pages = pages;
-        this.read = read;
-        this.id = crypto.randomUUID();
+
+      class Book {
+        constructor(title, author, pages, read) {
+          this.title = title;
+          this.author = author;
+          this.pages = pages;
+          this.read = read;
+          this.id = crypto.randomUUID();
+        }
+
+        toggleReadStatus = function () {
+          this.read = !this.read;
+        };
       }
 
-      Book.prototype.toggleReadStatus = function () {
+      /*Book.prototype.toggleReadStatus = function () {
         this.read = !this.read;
-      };
+      };*/
 
       //function to add book to libraTo facilitate this you will want to create Book prototype function that toggles a book instance’s read status.ry
       function addBookToLibrary(title, author, pages, read) {
