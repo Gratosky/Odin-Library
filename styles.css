@@ -284,10 +284,12 @@ body.modal-open {
   right: 20px;
   cursor: pointer;
   transition: color 0.2s;
+  background-color: transparent;
 }
 
 .close-button:hover {
   color: rgb(36, 6, 6);
+  transition: color 0.2s;
 }
 
 .read-or-not {
@@ -323,15 +325,11 @@ input:focus {
 }
 
 input:invalid:not(:placeholder-shown) {
-  border: 2px solid red;
+  border: 2px solid rgb(255, 13, 0);
 }
 
-input:valid {
-  border: 2px solid green;
-}
-
-input:valid + .error-message {
-  display: none;
+input:valid:not(:placeholder-shown) {
+  border: 2px solid rgb(0, 255, 21);
 }
 
 /*DIALOG STYLING END*/

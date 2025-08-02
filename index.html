@@ -245,11 +245,13 @@
 
       // validate form using constraint_api
       function showErrorMessage(input) {
-        let errorMessageSpan = input.nextElementSibling;
+        const errorMessageSpan = input.nextElementSibling;
         const formGroup = input.parentElement;
 
+        input.setCustomValidity("");
+
         if (input.validity.valid) {
-          errorMessageSpan = "";
+          errorMessageSpan.textContent = "";
           formGroup.classList.add("valid");
         } else {
           let errorMessage = "";
@@ -261,6 +263,7 @@
           } else if (input.validity.typeMismatch) {
             errorMessage = "Please enter a number!";
           }
+
           errorMessageSpan.textContent = errorMessage;
           formGroup.classList.add("invalid");
         }
