@@ -21,7 +21,7 @@
       <div class="book-form">
         <span class="close-button">&times;</span>
         <h2>Add New Book</h2>
-        <form action="#" method="dialog" id="bookForm">
+        <form action="#" method="dialog" id="bookForm" novalidate>
           <div class="input-field">
             <!--Title Input-->
             <label for="title" class="book-title">Book Title</label>
@@ -33,6 +33,7 @@
               required
               class="title-input"
             />
+            <span class="error-message"></span>
           </div>
 
           <!--Author Input-->
@@ -46,6 +47,7 @@
               required
               name="author"
             />
+            <span class="error-message"></span>
           </div>
 
           <!--Pages Input-->
@@ -60,6 +62,7 @@
               min="1"
               name="pages"
             />
+            <span class="error-message"></span>
           </div>
 
           <!--Read Status Checkbox-->
@@ -78,9 +81,13 @@
 
     <script>
       let myLibrary = [];
+      const form = document.getElementById("bookForm");
+      const titleInput = document.getElementById("title");
+      const authorInput = document.getElementById("author");
+      const pagesInput = document.getElementById("pages");
+      const inputs = [titleInput, authorInput, pagesInput];
 
-      //Book object
-
+      //class to create Book instances
       class Book {
         constructor(title, author, pages, read) {
           this.title = title;
@@ -99,7 +106,7 @@
         this.read = !this.read;
       };*/
 
-      //function to add book to libraTo facilitate this you will want to create Book prototype function that toggles a book instance’s read status.ry
+      //function to add book to library
       function addBookToLibrary(title, author, pages, read) {
         const book = new Book(title, author, pages, read);
         myLibrary.push(book);
@@ -185,7 +192,7 @@
         const mainContent = document.querySelector(".main-content");
         const addBookBtn = document.querySelector(".add-book");
         const closeModalBtn = document.querySelector(".close-button");
-        const bookForm = document.getElementById("bookForm");
+        //const bookForm = document.getElementById("bookForm");
 
         //function to open modal
         function openModal() {
@@ -211,22 +218,12 @@
         // Set up all the event listeners
         addBookBtn.addEventListener("click", openModal);
         closeModalBtn.addEventListener("click", closeModal);
-
-        bookForm.addEventListener("submit", function (event) {
-          event.preventDefault();
-
-          //Get input values
-          const bookTitle = document.querySelector(".title-input").value;
-          const bookAuthor = document.querySelector(".author-input").value;
-          const bookPages = parseInt(
-            document.querySelector(".pages-input").value
-          );
-          const bookRead = document.querySelector(".read-status").checked;
-
-          addBookToLibrary(bookTitle, bookAuthor, bookPages, bookRead);
-
-          bookForm.reset();
-          closeModal();
+        form.addEventListener("submit", () => {
+          if (handleSubmit(event)) {
+            getFormValuesAndCreateBook();
+            form.reset();
+            closeModal();
+          }
         });
 
         // Event listener for closing modal by clicking backdrop
@@ -244,6 +241,54 @@
             document.body.style.overflow = "";
           }
         });
+      }
+
+      // validate form using constraint_api
+      function showErrorMessage(input) {
+        let errorMessageSpan = input.nextElementSibling;
+        const formGroup = input.parentElement;
+
+        if (input.validity.valid) {
+          errorMessageSpan = "";
+          formGroup.classList.add("valid");
+        } else {
+          let errorMessage = "";
+
+          if (input.validity.valueMissing) {
+            errorMessage = "This field is required!";
+          } else if (input.validity.tooShort) {
+            errorMessage = `Please enter at least ${input.minLength} characters`;
+          } else if (input.validity.typeMismatch) {
+            errorMessage = "Please enter a number!";
+          }
+          errorMessageSpan.textContent = errorMessage;
+          formGroup.classList.add("invalid");
+        }
+      }
+
+      //function to handle submit
+      function handleSubmit(event) {
+        event.preventDefault();
+
+        inputs.forEach((input) => {
+          showErrorMessage(input);
+        });
+        const isValid = form.checkValidity();
+
+        // Return the result of te validation
+        return isValid;
+      }
+
+      // Function to get values from form and create a book
+      function getFormValuesAndCreateBook() {
+        const bookTitle = document.querySelector(".title-input").value;
+        const bookAuthor = document.querySelector(".author-input").value;
+        const bookPages = parseInt(
+          document.querySelector(".pages-input").value
+        );
+        const bookRead = document.querySelector(".read-status").checked;
+
+        addBookToLibrary(bookTitle, bookAuthor, bookPages, bookRead);
       }
 
       //  Trigger the Initialization Function
