@@ -246,6 +246,7 @@
       // validate form using constraint_api
       function showErrorMessage(input) {
         const errorMessageSpan = input.nextElementSibling;
+
         const formGroup = input.parentElement;
 
         input.setCustomValidity("");
@@ -262,8 +263,11 @@
             errorMessage = `Please enter at least ${input.minLength} characters`;
           } else if (input.validity.typeMismatch) {
             errorMessage = "Please enter a number!";
+          } else {
+            errorMessage = input.validationMessage;
           }
 
+          input.setCustomValidity(errorMessage);
           errorMessageSpan.textContent = errorMessage;
           formGroup.classList.add("invalid");
         }
@@ -273,11 +277,26 @@
       function handleSubmit(event) {
         event.preventDefault();
 
+        //check all fields upon submission to show any remaining errors
         inputs.forEach((input) => {
           showErrorMessage(input);
         });
+
         const isValid = form.checkValidity();
 
+        // add blur after user leaves input field
+        inputs.forEach((input) => {
+          input.addEventListener("blur", () => {
+            showErrorMessage(input);
+          });
+        });
+
+        //add input eventlisteners to all inputs. this provides live feedback as they type in
+        inputs.forEach((input) => {
+          input.addEventListener("input", () => {
+            showErrorMessage(input);
+          });
+        });
         // Return the result of te validation
         return isValid;
       }

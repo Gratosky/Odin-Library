@@ -138,6 +138,7 @@ body {
   transform: scale(1.05);
   transition: transform 0.2s ease-in-out;
   background-color: #3a7bbf;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
 }
 .book-card div {
   margin-bottom: 8px;
